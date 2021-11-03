@@ -50,18 +50,23 @@ def draw_delaunay(img, subdiv, delaunay_color):
 def draw_voronoi(img, subdiv):
     (facets, centers) = subdiv.getVoronoiFacetList([])
 
-    for i in range(0, len(facets)):
-        ifacet_arr = []
-        for f in facets[i]:
-            ifacet_arr.append(f)
+    with open("data.txt", "w") as file:
+        for i in range(0, len(facets)):
+            ifacet_arr = []
+            for f in facets[i]:
+                ifacet_arr.append(f)
 
-        ifacet = np.array(ifacet_arr, np.int)
-        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            ifacet = np.array(ifacet_arr, np.int)
+            color = (random.randint(0, 255), random.randint(
+                0, 255), random.randint(0, 255))
 
-        cv2.fillConvexPoly(img, ifacet, color, cv2.LINE_AA, 0)
-        ifacets = np.array([ifacet])
-        cv2.polylines(img, ifacets, True, (0, 0, 0), 1, cv2.LINE_AA, 0)
-        cv2.circle(img, (centers[i][0], centers[i][1]), 3, (0, 0, 0), cv2.FILLED, cv2.LINE_AA, 0)
+            cv2.fillConvexPoly(img, ifacet, color, cv2.LINE_AA, 0)
+            ifacets = np.array([ifacet])
+            cv2.polylines(img, ifacets, True, (0, 0, 0), 1, cv2.LINE_AA, 0)
+            cv2.circle(img, (centers[i][0], centers[i][1]),
+                       3, (0, 0, 0), cv2.FILLED, cv2.LINE_AA, 0)
+
+            file.write(f"{int(centers[i][0])} {int(centers[i][1])} \n")
 
 
 def delaunay_triangulation(img, points, voronoi=True):
@@ -147,11 +152,13 @@ def main():
     # If l28 only use 28 of the 68 landmarks provided by dlib shape-predictor
     l28 = args.l28
     if l28:
-        mask = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 21, 22, 23, 25, 27, 29, 30, 31, 35, 36, 39, 42, 45, 48, 51, 54, 57]
+        mask = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 21, 22, 23,
+                25, 27, 29, 30, 31, 35, 36, 39, 42, 45, 48, 51, 54, 57]
         landmarks = [landmarks[i] for i in mask]
 
     # Compute and draw triangulation
-    img_delaunay, img_voronoi = delaunay_triangulation(img, landmarks, args.voronoi)
+    img_delaunay, img_voronoi = delaunay_triangulation(
+        img, landmarks, args.voronoi)
 
     # Save results in files
     if args.save:
@@ -165,12 +172,15 @@ def main():
 
 if __name__ == '__main__':
     # Parse arguments
-    parser = argparse.ArgumentParser(description='Process image for facial recognition analysis and visualization.')
+    parser = argparse.ArgumentParser(
+        description='Process image for facial recognition analysis and visualization.')
     parser.add_argument('--image', help='image to process', required=True)
     parser.add_argument('--voronoi', action='store_true', help='show voronoi diagrams of recognized face',
                         required=False)
-    parser.add_argument('--save', action='store_true', help='save results in separate files', required=False)
-    parser.add_argument('--l28', action='store_true', help='only use 28 landmarks', required=False)
+    parser.add_argument('--save', action='store_true',
+                        help='save results in separate files', required=False)
+    parser.add_argument('--l28', action='store_true',
+                        help='only use 28 landmarks', required=False)
     args = parser.parse_args()
 
     # Call main function
