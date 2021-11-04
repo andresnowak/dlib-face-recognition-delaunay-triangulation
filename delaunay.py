@@ -50,23 +50,20 @@ def draw_delaunay(img, subdiv, delaunay_color):
 def draw_voronoi(img, subdiv):
     (facets, centers) = subdiv.getVoronoiFacetList([])
 
-    with open("data.txt", "w") as file:
-        for i in range(0, len(facets)):
-            ifacet_arr = []
-            for f in facets[i]:
-                ifacet_arr.append(f)
+    for i in range(0, len(facets)):
+        ifacet_arr = []
+        for f in facets[i]:
+            ifacet_arr.append(f)
 
-            ifacet = np.array(ifacet_arr, np.int)
-            color = (random.randint(0, 255), random.randint(
-                0, 255), random.randint(0, 255))
+        ifacet = np.array(ifacet_arr, np.int)
+        color = (random.randint(0, 255), random.randint(
+            0, 255), random.randint(0, 255))
 
-            cv2.fillConvexPoly(img, ifacet, color, cv2.LINE_AA, 0)
-            ifacets = np.array([ifacet])
-            cv2.polylines(img, ifacets, True, (0, 0, 0), 1, cv2.LINE_AA, 0)
-            cv2.circle(img, (centers[i][0], centers[i][1]),
-                       3, (0, 0, 0), cv2.FILLED, cv2.LINE_AA, 0)
-
-            file.write(f"{int(centers[i][0])} {int(centers[i][1])} \n")
+        cv2.fillConvexPoly(img, ifacet, color, cv2.LINE_AA, 0)
+        ifacets = np.array([ifacet])
+        cv2.polylines(img, ifacets, True, (0, 0, 0), 1, cv2.LINE_AA, 0)
+        cv2.circle(img, (centers[i][0], centers[i][1]),
+                   3, (0, 0, 0), cv2.FILLED, cv2.LINE_AA, 0)
 
 
 def delaunay_triangulation(img, points, voronoi=True):
@@ -146,6 +143,11 @@ def main():
 
     # Detect landmarks using model
     _, landmarks = detect_landmarks(img)
+    print(landmarks)
+
+    with open("data.txt", "w") as file:
+        for x, y in landmarks:
+            file.write(f"{x} {y} \n")
 
     # Draw face Bounding box
 
